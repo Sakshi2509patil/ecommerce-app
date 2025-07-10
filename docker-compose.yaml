@@ -1,34 +1,4 @@
-# # yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
 
-# version: '3'
-# services:
-#   mongo:
-#     image: mongo
-#     container_name: mongodb
-#     environment:
-#       - MONGODB_URI=mongodb://mongodb:27017/mydb
-#     depends_on:
-#       - mongodb
-   
-#   server:
-#     build:
-#       context: .
-#       dockerfile: Dockerfiles/Dockerfile.server
-#     container_name: backend
-#     ports:
-#       - "5000:5000"
-#     depends_on:
-#       - mongo
-   
-#   client:
-#     build:
-#       context: .
-#       dockerfile: Dockerfiles/Dockerfile.client
-#     container_name: frontend
-#     ports:
-#       - "3000:3000"
-#     depends_on:
-#       - server
 
 # yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
 
