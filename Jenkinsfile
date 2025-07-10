@@ -2,36 +2,24 @@ pipeline {
   agent any
 
   environment {
-    DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')  // Set in Jenkins Credentials
+    DOCKER_IMAGE_CLIENT = "client"
+    DOCKER_IMAGE_SERVER = "server"
   }
 
   stages {
-    stage('Clone') {
+    stage('Build & Push') {
       steps {
-        git 'https://github.com/Sakshi2509patil/ecommerce-app.git'  // 🔁 Use your repo URL
-      }
-    }
-
-    stage('Build Docker Images') {
-      steps {
-        sh 'docker build -t sakshi2/react-client -f Dockerfiles/Dockerfile.client .'
-        sh 'docker build -t sakshi2/node-server -f Dockerfiles/Dockerfile.server .'
-      }
-    }
-
-    stage('Push to DockerHub') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-          sh 'echo $PASS | docker login -u $USER --password-stdin'
-          sh 'docker push sakshi2/react-client'
-          sh 'docker push sakshi2/node-server'
+        withCredentials([usernamePassword(
+          credentialsId: 'dockerhub-creds',
+          usernameVariable: 'DOCKER_USER',
+          passwordVariable: 'DOCKER_PASS'
+        )]) {
+          sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+          sh 'docker build -t $DOCKER_USER/$DOCKER_IMAGE_CLIENT -f Dockerfiles/Dockerfile.client .'
+          sh 'docker push $DOCKER_USER/$DOCKER_IMAGE_CLIENT'
+          sh 'docker build -t $DOCKER_USER/$DOCKER_IMAGE_SERVER -f Dockerfiles/Dockerfile.server .'
+          sh 'docker push $DOCKER_USER/$DOCKER_IMAGE_SERVER'
         }
-      }
-    }
-
-    stage('Deploy via Helm') {
-      steps {
-        sh 'helm upgrade --install ecommerce-app ./helm-chart'
       }
     }
   }
